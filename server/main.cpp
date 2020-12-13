@@ -1,11 +1,11 @@
 #include <iostream>
-#include "tcp/tcpserver.h"
+#include "network_server/network_Server.h"
 
 using namespace std;
 
 int main(void)
 {
-    TcpServer TcpServer1;
+    NetworkServer TcpServer1;
     TcpServer1.StartServer();
     return 0;
 }
