@@ -28,6 +28,9 @@ NetworkServer::NetworkServer(const string & ServerName, int SocketDomain, int So
 inline void NetworkServer:: claim_server()
 {
 	cout << ">>> " << strServerName << " <<<" << endl;
+	cout << "= Server       Type  : " << (intSocketType == SOCK_STREAM ? "TCP Server":"UDP Server") << endl;
+	cout << "= Server IP Address  : " << strSeverIpAddr  << endl;
+	cout << "= Server Port Number : " << strSeverIpAddr  << endl;
 }
 
 inline void NetworkServer::init_Config()
@@ -36,10 +39,6 @@ inline void NetworkServer::init_Config()
 	socketAddr.sin_family      = intSocketDomain;
 	socketAddr.sin_port        = htons(intPortNumber);
 	socketAddr.sin_addr.s_addr = htonl(inet_addr((char *)strSeverIpAddr.data()));
-}
-
-void NetworkServer::StartServer()
-{
 	intSocketFd = socket(intSocketDomain, intSocketType, 0);
 	if (intSocketFd == -1)
 	{
@@ -56,22 +55,26 @@ void NetworkServer::StartServer()
 		perror("Listening Socket Error");
 		return;
 	}
-	int intAccptFd = accept(intSocketFd, (struct sockaddr *)&socketAddr, &socketAddrLen);
-	if (intAccptFd == -1)
+}
+
+void NetworkServer::StartServer()
+{
+	while(true)
 	{
-		perror("Accepting Socket Error");
-		return;
-	}
-	else
-	{
-		cout << intAccptFd << " Connected" << endl;
-		Transfer(intAccptFd);
+		int intAccptFd = accept(intSocketFd, (struct sockaddr *)&socketAddr, &socketAddrLen);
+		if (intAccptFd == -1)
+		{
+			perror("Accepting Socket Error");
+			return;
+		}
+		else
+		{
+			thread client(Transfer, 0);
+		}
 	}
 	close(intSocketFd);
 	return;
 }
-
-
 
 void NetworkServer::StopServer()
 {
@@ -80,6 +83,7 @@ void NetworkServer::StopServer()
 
 void NetworkServer::Transfer(int intAccptFd)
 {
+	cout << intAccptFd << " Connected" << endl;
 	ssize_t numRecv = 0;
 	transferDataBuf = new char[512];
 	while(1)

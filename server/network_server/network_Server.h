@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <iostream>
+#include <thread>
 
 class NetworkServer
 {
@@ -15,7 +16,7 @@ class NetworkServer
 		bool bStopServerInd; // Indication for stop the Server
 		char* transferDataBuf; // Buffer for Data
 		ssize_t dataBufCapacity; // Buffer Capacity
-		short intPortNumber;
+		short intPortNumber; // Server Port Number
 		int intSocketFd;
 		struct sockaddr_in socketAddr;
 		size_t socketAddrLen;
