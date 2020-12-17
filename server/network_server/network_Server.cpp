@@ -69,7 +69,8 @@ void NetworkServer::StartServer()
 		}
 		else
 		{
-			thread client(Transfer, 0);
+			thread client(&NetworkServer::Transfer, this, intAccptFd);
+			client.detach();
 		}
 	}
 	close(intSocketFd);
@@ -101,4 +102,3 @@ void NetworkServer::Transfer(int intAccptFd)
 	}
 	return;
 }
-
